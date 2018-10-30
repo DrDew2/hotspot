@@ -39,7 +39,10 @@ set(hotspot_SRCS
     resultsbottomuppage.cpp
     resultsflamegraphpage.cpp
     resultscallercalleepage.cpp
+    annotate/resultsannotatepage.cpp
     resultsutil.cpp
+
+    annotate/codeviewer.cpp
 
     # ui files:
     mainwindow.ui
@@ -55,7 +58,7 @@ set(hotspot_SRCS
 
     # resources:
     resources.qrc
-)
+        annotate/linearea.h)
 
 ecm_add_app_icon(hotspot_SRCS ICONS
     ${CMAKE_CURRENT_SOURCE_DIR}/images/icons/128-hotspot_app_icon.png

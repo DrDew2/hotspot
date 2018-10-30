@@ -33,6 +33,7 @@
 #include <QFileInfo>
 #include <QMenu>
 #include <QSortFilterProxyModel>
+#include <iostream>
 
 #include "parsers/perf/perfparser.h"
 #include "resultsutil.h"
@@ -86,6 +87,14 @@ ResultsCallerCalleePage::ResultsCallerCalleePage(PerfParser* parser, QWidget* pa
     ResultsUtil::setupCostDelegate(m_callerCalleeCostModel, ui->callerCalleeTableView);
 
     connect(parser, &PerfParser::callerCalleeDataAvailable, this, [this](const Data::CallerCalleeResults& data) {
+        for (auto& kv: data.entries)
+        {
+            std::cerr << "Entry" << std::endl;
+            for (auto& kv2 : kv.sourceMap.keys())
+            {
+                std::cerr << kv2.toStdString() << ": " << kv.sourceMap[kv2].inclusiveCost[0] << std::endl;
+            }
+        }
         m_callerCalleeCostModel->setResults(data);
         ResultsUtil::hideEmptyColumns(data.inclusiveCosts, ui->callerCalleeTableView,
                                       CallerCalleeModel::NUM_BASE_COLUMNS);
@@ -191,7 +200,7 @@ void ResultsCallerCalleePage::onSourceMapActivated(const QModelIndex& index)
 {
     const auto location = toSourceMapLocation(index);
     if (location) {
-        emit navigateToCode(location.path, location.lineNumber, 0);
+        emit annotateCode(location.path, location.lineNumber);
     }
 }
 

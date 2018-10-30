@@ -43,6 +43,7 @@ class ResultsBottomUpPage;
 class ResultsTopDownPage;
 class ResultsFlameGraphPage;
 class ResultsCallerCalleePage;
+class ResultsAnnotatePage;
 
 class ResultsPage : public QWidget
 {
@@ -58,6 +59,7 @@ public:
 
 public slots:
     void onNavigateToCode(const QString& url, int lineNumber, int columnNumber);
+    void onAnnotateCode(const QString& url, int lineNumber);
     void onJumpToCallerCallee(const Data::Symbol& symbol);
 
 signals:
@@ -74,5 +76,6 @@ private:
     ResultsTopDownPage* m_resultsTopDownPage;
     ResultsFlameGraphPage* m_resultsFlameGraphPage;
     ResultsCallerCalleePage* m_resultsCallerCalleePage;
+    ResultsAnnotatePage* m_resultsAnnotatePage;
     QWidget* m_filterBusyIndicator;
 };

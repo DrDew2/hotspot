@@ -35,6 +35,7 @@
 #include "resultsflamegraphpage.h"
 #include "resultssummarypage.h"
 #include "resultstopdownpage.h"
+#include "annotate/resultsannotatepage.h"
 #include "resultsutil.h"
 
 #include "models/eventmodel.h"
@@ -55,6 +56,7 @@ ResultsPage::ResultsPage(PerfParser* parser, QWidget* parent)
     , m_resultsTopDownPage(new ResultsTopDownPage(parser, this))
     , m_resultsFlameGraphPage(new ResultsFlameGraphPage(parser, this))
     , m_resultsCallerCalleePage(new ResultsCallerCalleePage(parser, this))
+    , m_resultsAnnotatePage(new ResultsAnnotatePage(parser, this))
     , m_filterBusyIndicator(nullptr) // create after we setup the UI to keep it on top
 {
     ui->setupUi(this);
@@ -65,6 +67,7 @@ ResultsPage::ResultsPage(PerfParser* parser, QWidget* parent)
     ui->resultsTabWidget->addTab(m_resultsTopDownPage, tr("Top Down"));
     ui->resultsTabWidget->addTab(m_resultsFlameGraphPage, tr("Flame Graph"));
     ui->resultsTabWidget->addTab(m_resultsCallerCalleePage, tr("Caller / Callee"));
+    ui->resultsTabWidget->addTab(m_resultsAnnotatePage, tr("Annotate"));
     ui->resultsTabWidget->setCurrentWidget(m_resultsSummaryPage);
 
     for (int i = 0, c = ui->resultsTabWidget->count(); i < c; ++i) {
@@ -134,6 +137,7 @@ ResultsPage::ResultsPage(PerfParser* parser, QWidget* parent)
     });
 
     connect(m_resultsCallerCalleePage, &ResultsCallerCalleePage::navigateToCode, this, &ResultsPage::onNavigateToCode);
+    connect(m_resultsCallerCalleePage, &ResultsCallerCalleePage::annotateCode, this, &ResultsPage::onAnnotateCode);
 
     connect(m_resultsSummaryPage, &ResultsSummaryPage::jumpToCallerCallee, this, &ResultsPage::onJumpToCallerCallee);
     connect(m_resultsBottomUpPage, &ResultsBottomUpPage::jumpToCallerCallee, this, &ResultsPage::onJumpToCallerCallee);
@@ -163,6 +167,12 @@ ResultsPage::~ResultsPage() = default;
 void ResultsPage::onNavigateToCode(const QString& url, int lineNumber, int columnNumber)
 {
     emit navigateToCode(url, lineNumber, columnNumber);
+}
+
+void ResultsPage::onAnnotateCode(const QString& url, int lineNumber)
+{
+    m_resultsAnnotatePage->annotate(url, lineNumber);
+    ui->resultsTabWidget->setCurrentWidget(m_resultsAnnotatePage);
 }
 
 void ResultsPage::setSysroot(const QString& path)

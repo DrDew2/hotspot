@@ -1,5 +1,5 @@
 /*
-  resultscallercalleepage.h
+  resultsannotatepage.h
 
   This file is part of Hotspot, the Qt GUI for performance analysis.
 
@@ -29,58 +29,26 @@
 
 #include <QWidget>
 
-namespace Ui {
-class ResultsCallerCalleePage;
-}
-
 namespace Data {
 struct Symbol;
 }
 
-class QSortFilterProxyModel;
-class QModelIndex;
-
+class QVBoxLayout;
+class CodeViewer;
 class PerfParser;
-class CallerCalleeModel;
 
-class ResultsCallerCalleePage : public QWidget
+class ResultsAnnotatePage : public QWidget
 {
     Q_OBJECT
+
 public:
-    explicit ResultsCallerCalleePage(PerfParser* parser, QWidget* parent = nullptr);
-    ~ResultsCallerCalleePage();
 
-    void setSysroot(const QString& path);
-    void setAppPath(const QString& path);
+    explicit ResultsAnnotatePage(PerfParser* parser, QWidget* parent = nullptr);
+    ~ResultsAnnotatePage();
 
-    void jumpToCallerCallee(const Data::Symbol& symbol);
-
-private slots:
-    void onSourceMapContextMenu(const QPoint& pos);
-    void onSourceMapActivated(const QModelIndex& index);
-
-signals:
-    void annotateCode(const QString& url, int lineNumber);
-    void navigateToCode(const QString& url, int lineNumber, int columnNumber);
+    void annotate(const QString& filename, int line);
 
 private:
-    struct SourceMapLocation
-    {
-        inline explicit operator bool() const
-        {
-            return !path.isEmpty();
-        }
-
-        QString path;
-        int lineNumber = -1;
-    };
-    SourceMapLocation toSourceMapLocation(const QModelIndex& index);
-
-    QScopedPointer<Ui::ResultsCallerCalleePage> ui;
-
-    CallerCalleeModel* m_callerCalleeCostModel;
-    QSortFilterProxyModel* m_callerCalleeProxy;
-
-    QString m_sysroot;
-    QString m_appPath;
+    QVBoxLayout* wrapper;
+    CodeViewer* viewer;
 };
